@@ -1,0 +1,223 @@
+% #######################################
+% ########### FILL THESE IN #############
+% #######################################
+\def\mytitle{Coursework: Homomorphic Encryption}
+\def\mykeywords{Cryptography, SEAL, Paillier, Machine Learning, Homomorphic Encryption}
+\def\myauthor{William Bowditch}
+\def\contact{40418372@live.napier.ac.uk}
+\def\mymodule{Esecurity (CSN11117)}
+% #######################################
+% #### YOU DON'T NEED TO TOUCH BELOW ####
+% #######################################
+\documentclass[10pt, a4paper]{article}
+\usepackage[a4paper,outer=1.5cm,inner=1.5cm,top=1.75cm,bottom=1.5cm]{geometry}
+\twocolumn
+\usepackage{graphicx}
+\graphicspath{{./images/}}
+%colour our links, remove weird boxes
+\usepackage[colorlinks,linkcolor={black},citecolor={blue!80!black},urlcolor={blue!80!black}]{hyperref}
+\usepackage{amsfonts}
+\newcommand{\Z}{\mathbb{Z}}
+%Stop indentation on new paragraphs
+\usepackage[parfill]{parskip}
+%% Arial-like font
+\usepackage{lmodern}
+\renewcommand*\familydefault{\sfdefault}
+%Napier logo top right
+\usepackage{watermark}
+%Lorem Ipusm dolor please don't leave any in you final report ;)
+\usepackage{lipsum}
+\usepackage{xcolor}
+\usepackage{listings}
+%give us the Capital H that we all know and love
+\usepackage{float}
+%tone down the line spacing after section titles
+\usepackage{titlesec}
+%Cool maths printing
+\usepackage{amsmath}
+%PseudoCode
+\usepackage{algorithm2e}
+
+\titlespacing{\subsection}{0pt}{\parskip}{-3pt}
+\titlespacing{\subsubsection}{0pt}{\parskip}{-\parskip}
+\titlespacing{\paragraph}{0pt}{\parskip}{\parskip}
+\newcommand{\figuremacro}[5]{
+    \begin{figure}[#1]
+        \centering
+        \includegraphics[width=#5\columnwidth]{#2}
+        \caption[#3]{\textbf{#3}#4}
+        \label{fig:#2}
+    \end{figure}
+}
+
+\lstset{
+	escapeinside={/*@}{@*/}, language=C++,
+	basicstyle=\fontsize{8.5}{12}\selectfont,
+	numbers=left,numbersep=2pt,xleftmargin=2pt,frame=tb,
+    columns=fullflexible,showstringspaces=false,tabsize=4,
+    keepspaces=true,showtabs=false,showspaces=false,
+    backgroundcolor=\color{white}, morekeywords={inline,public,
+    class,private,protected,struct},captionpos=t,lineskip=-0.4em,
+	aboveskip=10pt, extendedchars=true, breaklines=true, 
+	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	keywordstyle=\color[rgb]{0,0,1},
+	commentstyle=\color[rgb]{0.133,0.545,0.133},
+	stringstyle=\color[rgb]{0.627,0.126,0.941}
+}
+
+\thiswatermark{\centering \put(336.5,-38.0){\includegraphics[scale=0.8]{logo}} }
+\title{\mytitle}
+\author{\myauthor\hspace{1em}\\\contact\\Edinburgh Napier University\hspace{0.5em}-\hspace{0.5em}\mymodule}
+\date{}
+\hypersetup{pdfauthor=\myauthor,pdftitle=\mytitle,pdfkeywords=\mykeywords}
+\sloppy
+% #######################################
+% ########### START FROM HERE ###########
+% #######################################
+\begin{document}
+	\maketitle
+	\begin{abstract}
+	    %Replace the lipsum command with actual text 
+		Test
+	\end{abstract}
+    
+	\textbf{Keywords -- }{\mykeywords}
+
+	\section{Introduction}
+	
+	User privacy has always been a second priority behind revenue for technology companies, and for valid reasons; the revenue of these tech giants rely on  online marketing platforms fueled by user behaviour analytics. Companies like Facebook and Google digest raw data that needs to be normalized, sorted, and trained on in order to produce effective machine learning models. While this data can be protected with SSL tunnels on transit, it must be decrypted and stored in plain-text on corporate servers in order to provide any value. A parallel exists in civilian privacy and national security; government agencies like the NSA rely on Internet surveillance programs that search plain-text data in order to detect threats of national security. On the surface, free internet services and effective terrorism countermeasures seem like a reasonable trade in exchange for one's personal data. However, as is often the case in information security, humans are the weakest link in the chain. 
+	\paragraph{}Machine learning models (at least government sponsored models) do not use their plain-text access to stalk spouses and ex-lovers \cite{Selyukh:2013}. Furthermore, we trust the ride-sharing analytics of Uber to not abuse its data access by tracking the location of billionaires or querying for their phone numbers \cite{pymnts}. With these examples the predicament is clear; we wish to provide data for these models such that they continue to subsidize free internet services and protect homeland security, but we do not trust the human users that inevitably gain access to this data. Fortunately, the cryptographic community has been working on a solution for forty years  but it was not until recently that implementations became practical. 
+	\paragraph{}
+	Homomorphic encryption, the topic of this coursework, is a cryptographic scheme that allows a second party to perform arbitrary functions on a ciphertext without the need to decrypt the ciphertext in advanced. Furthermore, the decrypted ciphertext is equivalent to the output of the same arbitrary functions performed on the plaintext. Figure 1 illustrates this relationship. For example, fully homomorphic encryption would allow users to send encrypted data to government agencies and technology companies such that models can train and act on this data without knowing or needing to store the plaintext itself.  A cryptographic schemes is partially homomorphic if it allows unlimited operations to be performed but with one particular function, while a scheme is somewhat homomorphic if it allows limited operations of any arbitrary function.
+	   \figuremacro{h}{homomorphic_encryption}{Homomorphic Encryption}{ - Visualization}{1.0}
+	\paragraph{}
+	The literature review of this coursework will first explore the partially multiplicative homomorphic properties of the RSA algorithim, the first spark of development in the field of homomorphic encryption. We will then investigate the Paillier crypto system, a probabilistic asymmetric algorithm that allows addition between encrypted messages \cite{paillier1999public}. The most important literature we will review is Craig Gentry's 2009 seminal paper, which was the first paper to describe a credible fully homomorphic encryption scheme \cite{gentry2009fully}, followed by Junfeng Fan and Frederik's Vercauteren's "Somewhat Practical Fully Homomorphic Encryption", a paper the builds off of Gentry's work and was implemented by Microsoft in the C++ library SEAL \cite{sealcrypto}. 
+	\paragraph{}
+	The implementation section of this coursework is inspired from a 2017 blogpost \cite{iamtrask:2017}, and will construct a hypothetical scenario, solved with homomorphic encryption, such that a government agency wishes to use machine learning in order to identify pro-ISIS messages without (a) collecting the messages of citizens and (b) allowing users to be aware of what the model is predicting. Our implementation utilizes machine learning library scikit-learn \cite{scikit-learn}, the Github repository python-paillier \cite{python-paillier}, and a Python port \cite{PySEAL} of Microsoft SEAL 2.3 \cite{sealcrypto} in order to benchmark and evaluate the parameters of the Paillier and FV cryptosystems.  
+    
+	\section{Literature Review}
+	\subsection{RSA}
+	A year after publishing the original RSA paper \cite{rivest1978method}, Rivest claimed that, "it appears likely that there exist encryption functions which permit encrypted data to be operated on without preliminary decryption of the operands, for many sets of interesting operations" \cite{rivest1978data}. Rivest's suspicion is due to a peculiar property of the RSA algorithim that allows the homomorphic operations over the multiplicative field. In RSA, a sender Bob can encrypt value $V_1$ and value $V_2$ by raising these values to the power of $e$ and performing modulo arithmetic $N$ on the output, where $e$ is private and $N$ is public. 
+    
+    {\centering \Medium \(
+        C_1 = V_1^{e} \hspace{5}(mod\hspace{5} N)
+        
+        C_2 = V_1^{e} \hspace{5}(mod \hspace{5}N)
+    \)\par}
+	
+	Due to the algebraic properties of exponentiation, it is trivial to see that multiplying $C_1$ and $C_2$ is equivalent to multiplying $V_1$ and $V_2$.
+	
+	   {\centering \Medium \(
+        C_1 \times C_2 = V_1^{e} \times V_2^{e} \hspace{5}(mod \hspace{5}N)
+        
+        C_1 \times C_2 = (V_1 \times V_2)^{e} \hspace{5}(mod\hspace{5}N)
+    \)\par}
+	After decrypting with a complimentary key d, it is evident that the multiplication operation was performed successfully without any noise or inaccuracy in the output; as such the operation can be performed infinite times.
+	
+	\subsection{Paillier}
+	
+	Named after Pascal Paillier, the paillier crypto system was invented in 1999 as a probabilistic asymmetric crytographic scheme \cite{paillier1999public}. The computational strength of the paillier system relies on the decisional composite residuosity assumption, which claims that given a composite integer $n$ and integer $z$, it is difficult for an attacker to determine whether there exist a $y$ such that
+	
+	   {\centering \Medium \(
+       z \equiv y^{n} \hspace{5}(mod \hspace{5} n^{2})
+       
+    \)\par}
+	\paragraph{Key Generation}
+	
+	The public and private keys are first generated for the paillier system by choosing two large prime numbers $p$ and $q$ of equal length and computing $n = pq$ along with $\lambda = \phi(n)$ where $\phi(n) = (p-1)(q-1)$. $\mu$ can be found easily by calculating $\mu = \phi(n)^{-1} \hspace{5} (mod \hspace{3} n)$. 
+	\paragraph{}Consequently, our encryption key and encryption key are $(n,g)$ and $(\lambda,\mu)$, respectively.
+	\paragraph{Encryption}
+	For encryption in the paillier scheme, Alice must choose a positive integer message less than $n$, the first component of the public key. She then choose a random positive integer $r$ less than and coprime to $n$. The cipher-text value is then equal to:
+	
+	{\centering \Medium \(
+        c = g^{m} \times r^{n} \hspace{5} (mod \hspace{5} n^2)
+        
+    \)\par}
+	\paragraph{Decryption}
+	 Decryption of the cipher-text $c$ requires that $c < n^2$. The ciphertext can be decrypted to plaintext $m$ with the following equation:
+	 
+	 {\centering \Medium \(
+        m = L(c^{\lambda} \hspace{5} mod \hspace{5} n^2) \cdot \mu (mod \hspace{5} n)
+        
+        
+       where $ L(x) = \frac{x-1}{n}$
+    \)\par}
+    
+    \paragraph{}
+    The Decisional Composite Residuosity Assumption (DCRA) is the assumption that computing $n^{th}$ residue classes has intractable computational complexity, and thus acts as the trapdoor function for the paillier scheme.  A residue class is a set of integers that are congruent modulo $n$ for some positive integer $n$. A number $z$ is said to be a $n^th$ residue modulo $n^2$ if there exists a number $y \in \Z^{*}_{n^2} $ such that:
+    
+     {\centering \Medium \(
+        z = y^{n} \hspace{5} (mod \hspace{5} n^2)
+        
+    \)\par}
+    Paillier states that the problem of distinguishing n-th residues from non n-th residues is computationally difficult in that it cannot be distinguished in polynomial time. Since inverting the encryption equation of paillier scheme is the composite residuosity class problem, Paillier ensure semantic security \cite{paillier1999public}.
+	\paragraph{Additive Homomorphic Properties}
+	Paillier demonstrates the homomorphism from ($\Z^{*}_{n^2}, \times)$ to $(\Z^{*}_{n^2},+)$ via a lemma. Let the n-th residuosity class of $w$ with respect to $g$ be denoted as $\|w\|$:
+	
+	 {\centering \Medium \(
+        \forall w_1,w_2 $\in$ $Z ^{*}_{n^2}$ \hspace{10} \|w_1w_2\| = \|w_1\|_g + \|w_2\| \hspace{5} (mod \hspace{5} n)
+        
+    \)\par}
+    This lemma allows the three following homomorphic properties:
+    \begin{itemize}
+    	\item The product of $c_1$ and $c_2$ is equal to the sum of $m_1$ and $m_2$
+    	\item The product of $c_1$ and $g^{m_2}$ is equal to the sum of $m_1$ and $m_2$
+    	\item $c_1$ raised to the power of $m_1$ is equal to the product of $m_1$ and $m_2$
+    \end{itemize}
+    The homomorphic properties of paillier ciphertext with plaintexts is valuable in the context of the logistic regression implementation in Section 3. 
+	\subsection{Gentry}
+	\paragraph{Lattice Based Cryptography}
+	\paragraph{Bootstrapping}
+	\paragraph{Squashing}
+	
+	\subsection{FV Scheme}
+	\paragraph{Learning with Errors}
+	\paragraph{Modulus Switching Trick}
+	\paragraph{Relineraization}
+	
+	\section{Implementation}
+	\subsection{Background}
+	\subsection{Python Paillier}
+	\subsection{PySEAL}
+	\subsection{Logistic Regression}
+	\paragraph{Prediction function}
+	\subsection{BenevolentBigBrother and WinstonSmith}
+	
+	\subsection{Code Listing}
+    You can load segments of code from a file, or embed them directly.
+    
+\begin{lstlisting}[caption = Hello World! in c++]
+#include <iostream>
+
+int main() {
+    std::cout << "Hello World!" << std::endl;
+    std::cin.get();
+    return 0;
+}
+\end{lstlisting}
+    
+\subsection{PseudoCode}
+
+\begin{algorithm}[h]
+\For{$i = 0$ \KwTo $100$}{
+ print\_number = true\;
+\If{i is divisible by 3}{
+ print "Fizz"\;
+ print\_number = false\;
+}
+\If{i is divisible by 5}{
+ print "Buzz"\;
+ print\_number = false\;
+}
+\If{print\_number}{
+    print i\;
+}
+print a newline\;
+}
+\caption{FizzBuzz}
+\end{algorithm}
+	
+\section{Conclusion}	
+\bibliographystyle{ieeetr}
+\bibliography{references}
+\end{document}
