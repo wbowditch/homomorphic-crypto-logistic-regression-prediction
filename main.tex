@@ -4,7 +4,7 @@
 \def\mytitle{Coursework: Homomorphic Encryption}
 \def\mykeywords{Cryptography, SEAL, Paillier, Machine Learning, Homomorphic Encryption}
 \def\myauthor{William Bowditch}
-\def\contact{40418372@live.napier.ac.uk}
+\def\contact{wbowditch@secureworks.com}
 \def\mymodule{Esecurity (CSN11117)}
 % #######################################
 % #### YOU DON'T NEED TO TOUCH BELOW ####
@@ -164,14 +164,31 @@
     	\item The product of $c_1$ and $g^{m_2}$ is equal to the sum of $m_1$ and $m_2$
     	\item $c_1$ raised to the power of $m_1$ is equal to the product of $m_1$ and $m_2$
     \end{itemize}
-    The homomorphic properties of paillier ciphertext with plaintexts is valuable in the context of the logistic regression implementation in Section 3. 
+    The homomorphic properties of paillier ciphertext with plain-texts is valuable in the context of the logistic regression implementation in Section 3. 
 	\subsection{Gentry}
+	Craig Gentry broke new ground in the field of homomorphic encryption with his seminar paper, "Fully Homomorphic Encryption Using Ideal Lattices" \cite{gentry2009fully}. Gentry's method relies on a somewhat homomorphic lattice-based crypto scheme; the scheme is limited in the number of operations that can be performed on a cipher-text before "noise", a by-product of the probabilistic nature of the scheme, grows so large such that the plain-text mapping is inaccurate. The monumental insight gained from Gentry's work was the concept of bootstrapping, a technique that refreshes the noise of a ciphertext by decrypting the ciphertext with a new key without revealing the plaintext. While strictly following Gentry's algorithm was unrealistic due to Big-O complexity, his method was the foundation for practical implementations such as HELib and SEAL, the latter of which is utilized in Section 3.
 	\paragraph{Lattice Based Cryptography}
-	\paragraph{Bootstrapping}
-	\paragraph{Squashing}
+	In linear algebra, a basis of a vector space is a set of $n$ independent vectors such that any coordinate point on said space is a linear combination of these basis vectors. The lattice of a vector space is the set of basis linear combinations with integer coefficients; for example, all $(x,y)$ points where $x,y \in \Z$ on a Euclidean vector space make up the lattice. Ideal lattices are, "lattices corresponding to ideals in rings of the form $\Z[x]/〈f〉$ for some irreducible polynomial of degree $n$". Ideal lattices are essential to the semantic security of Gentry's FHE method due to the intractable nature of the closest vector problem - given a vector $v$ outside of any lattice points, which lattice point is closest to $v$? The closest vector problem forces one to perform lattice basis reduction in order to be solved, but at the cost of exponential time.
+	\figuremacro{h}{CVP}{Closest Vector Problem}{ - basis vectors in blue, external vector in green, closest vector in red \cite{wiki:lattice}}{0.4}
+	When the vector without error is known by a party, this learning with error problem allows the party to "hide" an encoded message $m_1$ with an error if the message space is $mod \hspace{5} p$ for some integer $p$, the cipher space is $mod \hspace{5} q$ for some integer $q >> p$, and the error is divisible by $p$, allowing simple future removal of the error. Consequently, the error is calculated by randomly generating $e$ from a uniform distribution and multiplying $e$ by $p$, thus ensuring this divisibility and clean error removal. Furthermore, it is essential that the chosen $p$ is much less than $q$ since all operations in the scheme are performed $mod \hspace{5} q $ \cite{raynal}.
+	\paragraph{}
+	Due to the algebraic properties of vector addition and multiplication, it is possible to calculate the sum and product of two cipher-texts with the respective sum and products of the error. When the error is removed after the operation $F(c_1,c_2)$, via decryption, the output is equivalent is $F(m_1,m_2)$. However, this growth in the error is why lattice-based cryptography is somewhat homomorphic; if the error grows too large then the closest lattice vector during decryption is no longer accurate. For example, on a euclidean space if the correct lattice vector is $(1,1)$ but the error is $x = .3$ and $y=0.6$, then the decryption will incorrectly decrypt to $(1,2)$.
 	
-	\subsection{FV Scheme}
+	
+	\paragraph{Bootstrapping}
+	The solution Craig Gentry proposes to counter noise growth in lattice-based cryptography is a "bootstrapping" technique, thus transforming the scheme from partially homomorphic to full homomorphic cryptography. The technique is based off the intuitive notion that the only way to remove noise is to decrypt the cipher-text; therefore if the decryption operations are performed with the private key $k_1$ encrypted with a new private key $k_2$ as well as the cipher-text $c_1$ encrypted with the new key $p_2$, then the error is reduced to the noise added by the homomorphic decryption operation. Due to the circuit complexity of the decryption operation, Gentry invents a squashing technique to the decryption function that in a sense provides a "hint" to the decryption process for the evaluator, but relies on the intractability of the subset sum problem; given a set of integers find a non empty subset with a sum of 0 \cite{gentry2009fully}. The majority of homomorphic research in the past decade has been built upon Gentry's proposal, mainly focusing on (1) reducing the homomorphic operation cost of decryption and (2) reducing the resources necessary to encrypt an already encrypted cipher-text.
+
+	\subsection{Brakerski and Vaikuntanathan}
+	In 2011, Zvika Brakersi and Vinod Vaikuntanathan published a fully homomorphic encryption scheme that improved on Gentry's scheme in both efficency and simplicity \cite{brakerski2014efficient}. This paper introduces two key concepts: a re-linearization technique that removes the need for intractability assumptions regarding ideal lattices, and a dimension-modulus technique that removes the need for squashing and the above mentioned intractability assumption of the subset sum problem. 
+	\paragraph{Re-Linearization}
+	Braverski and Vaikuntanathan migrated the assumption from ideal lattice cryptography to general lattices by utilizing learning with errors, which states that given a basis, a linear combination of the basis vector with small error, and a lattice point, finding the latter vector from the former is computationally difficult. Since ideal lattices are a relatively new field of study in the mathematics community as opposed to general lattices, Brakersi and Vaikuntanathan claim that the community has, "a much better understanding of the complexity of lattice problems (thanks to [LLL82, Ajt98, Mic00] and many others), compared to the corresponding problems on ideal lattices"\cite{brakerski2014efficient}, thus providing more confidence to this scheme's semantic security. By using learning with errors, a homomorphic multiplication optimization called re-linearizaton can be performed, which utilizes a new key to decrease the degree of cipher-text.
+	\paragraph{Dimension-Modulus Reduction}
+	As mentioned above, Gentry's 2009 paper utilizes a "squashing" technique in order to ensure that homomorphic operations were possible on the decryption circuits by relying on the hardness of the subset sum problem. Braverski and Vaikuntanathan demonstrate that a learning with error homomorphic scheme with dimension-modulus reduction only requires a relatively small decryption, thus making any squashing of the decryption circuit unnecessary. Dimension-modulus reduction is the process of converting a cipher-text with dimension $n$ and cipher modulo $q$ and mapping this ciphertext with new parameters of dimension $k$ where $k << n$ and modulo $log(p)$ where $p$ is the plain-text modulus. The semantic security of this dimension-modulus reduction relies the hardness of learning with errors for dimension $k$ modulo $log(p)$. Consequently, this reduction allows Braverski and Vaikuntanathan's scheme to be boot-strappable, thus fully homomorphic, without assumptions beyond the intractability of the learning with errors problem.
+	\subsection{Fan Vercauteren Scheme}
+	Jufeng Fan and Frederik Vercauteren's "Somewhat Practical Fully Homomorphic Encryption" directly builds off of Braverski's learning with errors homomorphic scheme by introducing a ring variant of the learning with error problem \cite{fan2012somewhat}. The 2012 paper optimizes Braverski's re-linearization with the aid of smaller re-linearization keys, as well as a modulus switching trick in order to simplify bootstrapping. 
+	
 	\paragraph{Learning with Errors}
+
 	\paragraph{Modulus Switching Trick}
 	\paragraph{Relineraization}
 	
@@ -182,6 +199,8 @@
 	\subsection{Logistic Regression}
 	\paragraph{Prediction function}
 	\subsection{BenevolentBigBrother and WinstonSmith}
+	
+	\section{Evaluation}
 	
 	\subsection{Code Listing}
     You can load segments of code from a file, or embed them directly.
@@ -217,7 +236,7 @@ print a newline\;
 \caption{FizzBuzz}
 \end{algorithm}
 	
-\section{Conclusion}	
+\section{Conclusions}	
 \bibliographystyle{ieeetr}
 \bibliography{references}
 \end{document}
