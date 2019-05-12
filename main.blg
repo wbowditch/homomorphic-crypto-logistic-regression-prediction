@@ -1,0 +1,51 @@
+This is BibTeX, Version 0.99d (TeX Live 2019)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: main.aux
+The style file: ieeetr.bst
+Database file #1: references.bib
+Warning--empty journal in Selyukh:2013
+Warning--empty journal in pymnts
+Warning--can't use both volume and number fields in gentry2009fully
+Warning--empty journal in iamtrask:2017
+You've used 15 entries,
+            1876 wiz_defined-function locations,
+            563 strings with 5605 characters,
+and the built_in function-call counts, 3510 in all, are:
+= -- 342
+> -- 126
+< -- 0
++ -- 50
+- -- 35
+* -- 232
+:= -- 484
+add.period$ -- 18
+call.type$ -- 15
+change.case$ -- 15
+chr.to.int$ -- 0
+cite$ -- 19
+duplicate$ -- 173
+empty$ -- 360
+format.name$ -- 35
+if$ -- 861
+int.to.chr$ -- 0
+int.to.str$ -- 15
+missing$ -- 10
+newline$ -- 52
+num.names$ -- 12
+pop$ -- 70
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 125
+stack$ -- 0
+substring$ -- 206
+swap$ -- 64
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 4
+while$ -- 31
+width$ -- 17
+write$ -- 138
+(There were 4 warnings)

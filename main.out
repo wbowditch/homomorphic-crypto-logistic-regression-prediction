@@ -1,0 +1,17 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Literature Review}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{RSA}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Paillier}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Gentry}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{Brakerski and Vaikuntanathan}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.5}{Fan Vercauteren Scheme}{section.2}% 7
+\BOOKMARK [1][-]{section.3}{Implementation}{}% 8
+\BOOKMARK [2][-]{subsection.3.1}{Background}{section.3}% 9
+\BOOKMARK [2][-]{subsection.3.2}{Python Paillier}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.3}{PySEAL}{section.3}% 11
+\BOOKMARK [2][-]{subsection.3.4}{Logistic Regression}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.5}{BenevolentBigBrother and WinstonSmith}{section.3}% 13
+\BOOKMARK [1][-]{section.4}{Evaluation}{}% 14
+\BOOKMARK [2][-]{subsection.4.1}{Code Listing}{section.4}% 15
+\BOOKMARK [2][-]{subsection.4.2}{PseudoCode}{section.4}% 16
+\BOOKMARK [1][-]{section.5}{Conclusions}{}% 17

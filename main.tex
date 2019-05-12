@@ -181,39 +181,188 @@
 	\subsection{Brakerski and Vaikuntanathan}
 	In 2011, Zvika Brakersi and Vinod Vaikuntanathan published a fully homomorphic encryption scheme that improved on Gentry's scheme in both efficency and simplicity \cite{brakerski2014efficient}. This paper introduces two key concepts: a re-linearization technique that removes the need for intractability assumptions regarding ideal lattices, and a dimension-modulus technique that removes the need for squashing and the above mentioned intractability assumption of the subset sum problem. 
 	\paragraph{Re-Linearization}
-	Braverski and Vaikuntanathan migrated the assumption from ideal lattice cryptography to general lattices by utilizing learning with errors, which states that given a basis, a linear combination of the basis vector with small error, and a lattice point, finding the latter vector from the former is computationally difficult. Since ideal lattices are a relatively new field of study in the mathematics community as opposed to general lattices, Brakersi and Vaikuntanathan claim that the community has, "a much better understanding of the complexity of lattice problems (thanks to [LLL82, Ajt98, Mic00] and many others), compared to the corresponding problems on ideal lattices"\cite{brakerski2014efficient}, thus providing more confidence to this scheme's semantic security. By using learning with errors, a homomorphic multiplication optimization called re-linearizaton can be performed, which utilizes a new key to decrease the degree of cipher-text.
+	Braverski and Vaikuntanathan migrated the assumption from ideal lattice cryptography to general lattices by utilizing learning with errors, which states that given a basis, a linear combination of the basis vector with small error, and a lattice point, finding the latter vector from the former is computationally difficult. Since ideal lattices are a relatively new field of study in the mathematics community as opposed to general lattices, Brakersi and Vaikuntanathan claim that the community has, "a much better understanding of the complexity of lattice problems (thanks to [LLL82, Ajt98, Mic00] and many others), compared to the corresponding problems on ideal lattices"\cite{brakerski2014efficient}, thus providing more confidence to this scheme's semantic security. By using learning with errors, a homomorphic multiplication optimization called re-linearizaton can be performed, which utilizes a new key to decrease the degree of cipher-text. This optimization prevents noise from growing exponentially during multiplication, replacing the growth factor with a constant dependent on the initial security parameter \lambda. 
 	\paragraph{Dimension-Modulus Reduction}
 	As mentioned above, Gentry's 2009 paper utilizes a "squashing" technique in order to ensure that homomorphic operations were possible on the decryption circuits by relying on the hardness of the subset sum problem. Braverski and Vaikuntanathan demonstrate that a learning with error homomorphic scheme with dimension-modulus reduction only requires a relatively small decryption, thus making any squashing of the decryption circuit unnecessary. Dimension-modulus reduction is the process of converting a cipher-text with dimension $n$ and cipher modulo $q$ and mapping this ciphertext with new parameters of dimension $k$ where $k << n$ and modulo $log(p)$ where $p$ is the plain-text modulus. The semantic security of this dimension-modulus reduction relies the hardness of learning with errors for dimension $k$ modulo $log(p)$. Consequently, this reduction allows Braverski and Vaikuntanathan's scheme to be boot-strappable, thus fully homomorphic, without assumptions beyond the intractability of the learning with errors problem.
 	\subsection{Fan Vercauteren Scheme}
+	
 	Jufeng Fan and Frederik Vercauteren's "Somewhat Practical Fully Homomorphic Encryption" directly builds off of Braverski's learning with errors homomorphic scheme by introducing a ring variant of the learning with error problem \cite{fan2012somewhat}. The 2012 paper optimizes Braverski's re-linearization with the aid of smaller re-linearization keys, as well as a modulus switching trick in order to simplify bootstrapping. 
 	
-	\paragraph{Learning with Errors}
-
+	\paragraph{Ring Learning with Errors}
+	In mathematics, a ring $R$ is a set with two binary operations that allows generalization from normal arithmetic to other frames like polynomials and functions. Thus, a polynomial ring can be $R = \Z / f(x)$ where $f(x) \in Z[x]$ is a monic irreducible polynomial of degree $d$. Fan and Vercauteren utilize polynomial rings in creating the hardness of their scheme: Definition 1 (Decision-RLWE). For security parameter λ, let f(x) be a cyclo- tomic polynomial Φm(x) with deg(f) = φ(m) depending on λ and set R = Z[x]/(f(x)). Let q = q(λ) ≥ 2 be an integer. For a random element s ∈ Rq and a distribution
+	χ = χ(λ) over R, denote with A(q) the distribution obtained by choosing a uniformly
+	randomelementa←Rq andanoiseterme←χandoutputting(a,[a·s+e]q).The Decision-RLWE problem is to distinguish between the distribution A(q) and the
+	d,q,χ uniform distribution U(Rq2).
 	\paragraph{Modulus Switching Trick}
-	\paragraph{Relineraization}
+	During re-linearization in Braverski's scheme, the secret key $s^2$ is masked  such that the error term $e_1$ is multiplied with the cipher-text $c_2$. In order to avoid excess error modulo $q$, a masked version of $s^2$ is substituted by using modulo $p \cdot q$ for some integer $q$. Consequently, this technique allows efficient transformation from cipher-text encrypted under $mod \hspace{5} p$ into a cipher-text under this new modulus $p \cdot q$ but with reduced noise.
+
 	
 	\section{Implementation}
 	\subsection{Background}
-	\subsection{Python Paillier}
+	As mentioned in Section 1, internet technology companies and government agencies each have an imperative, financially and politically, that require data analysis. However, the requirement for data analytics does not imply a need for data collection;  these organizations do not relish data silo maintenance, investing in security against data breach, and the damage control against never-ending unethical employee scandals. Homomorphic cryptography can diminish these vulnerabilities by separating the data evaluators from the data owners. For example, imagine a government agency who wishes to detect messages related to terrorist activity exchanged on the public network; we will refer to this agency as Big Brother. But unlike Orwell's dystopic counterpart, this Big Brother has regulations in place that prevent the collection of plain-text messages (most likely due to past scandals). Our Big Brother requires probable cause before being granted a warrant on a citizen. This conundrum can be solved using a homomorphic scheme akin to a metal detector at an airport. Rather than forcing a touch down of every passenger, airport security use metal detectors to single out the potentially dangerous passengers. Furthermore, since dangerous passengers can not experiment with an airport metal detector from home, the ability to reverse engineer or trick the airport detector is severely limited.  In our implementation of homomorphic cryptography, our metal detector is a homomorphically encrypted logistic regression model trained to detect pro-ISIS tweets. Logistic regression is a machine learning algorithm <define logistic regression here>. In our hypothetical scenario,  Big Brother trained his model using pro-ISIS messages collected from previous investigations and synthetic ISIS-related data; in reality, the pro-ISIS (pro_isis=1) and ISIS-related data (pro_isis=0) was collected from a Kaggle dataset. After training, Big Brother encrypts the weights and y-intercept of his model using either the Paillier scheme or Fan Vercauterene scheme, and sends the encrypted model with any necessary evaluation parameters to the messaging devices of his citizens. When an arbitrary citizen, who we will refer to as Winston Smith, sends a message from his device, the message is evaluated by the encrypted model resulting in an encrypted prediction that is sent to Big Brother; it is not possible for Winston to disable this feature. Upon receiving the encrypted prediction, Big Brother decrypts with his private key and ignores any probability below a threshold $\gamma$. However, a probability greater than $\gamma$ is equivalent of a $beep$ in airport security and can be used as probable cause for a warrant in order to lawfully obtain Winston's plain-text messages (as wells as more ground truth to improve the accuracy of his model). Consequently, two major goals have been achieved:  lawful citizens of this state have been ensured data privacy, and the state can protect national security without collecting personal data nor revealing the source code of their surveillance to potential criminals. 
+		\subsection{Python Paillier}
+	
+	\begin{lstlisting}[language=Python,caption = Paillier Scheme Initialization]
+		class PaillierScheme(HomomorphicScheme):
+		
+		def __init__(self, n_length=64, precision = 4):
+			self.pubkey, self.private_key = 
+				paillier.generate_paillier_keypair(n_length=64)
+				
+			self.precision = precision
+		
+		def getCrypto(self):
+			return PaillierCrypto(self.pubkey, self.private_key, 
+				self.precision)
+		
+		def getEval(self):
+			return PaillierEval()
+	\end{lstlisting}
 	\subsection{PySEAL}
+	\begin{lstlisting}[language=Python,caption = SEAL Scheme Initialization]
+	class SealScheme(HomomorphicScheme):
+	
+		def __init__(self, poly_modulus = 2048, bit_strength = 128, 
+			plain_modulus = 1<<8, integral_coeffs = 64, 
+			fractional_coeffs = 32, fractional_base = 3):
+			
+			parms = EncryptionParameters()
+			parms.set_poly_modulus("1x^{} + 1"
+			.format(poly_modulus))
+			
+			if (bit_strength == 128):
+				parms.set_coeff_modulus(
+					seal.coeff_modulus_128(poly_modulus))
+			else:
+				parms.set_coeff_modulus(
+					seal.coeff_modulus_192(poly_modulus))
+			
+			parms.set_plain_modulus(plain_modulus)
+			
+			self.parms = parms
+			context = SEALContext(parms)
+			
+			keygen = KeyGenerator(context)
+			public_key = keygen.public_key()
+			secret_key = keygen.secret_key()
+			
+			self.encryptor = Encryptor(context, public_key)
+			self.evaluator = Evaluator(context)
+			self.decryptor = Decryptor(context, secret_key)
+			
+			self.encoder = FractionalEncoder(context
+			.plain_modulus(), context.poly_modulus(), 
+			integral_coeffs, fractional_coeffs, fractional_base)
+		
+		def getCrypto(self):
+			return SealCrypto(self.encoder, self.encryptor, 
+				self.decryptor, self.parms)
+		
+		def getEval(self):
+			return SealEval(self.encoder, self.evaluator, self.parms)
+	\end{lstlisting}
+	
 	\subsection{Logistic Regression}
+	
 	\paragraph{Prediction function}
 	\subsection{BenevolentBigBrother and WinstonSmith}
 	
+	
+	\begin{lstlisting}[language=Python,caption = Benevolent Big Brother]
+	class BenevolentBigBrother:
+	
+		def __init__(self , classifier, vectorizer, 
+			homomorphic_cryptography, 
+			testset = None, trainset = None):
+			
+			self.classifier = classifier
+			self.vectorizer = vectorizer
+			self.homomorphic_cryptography = 
+				homomorphic_cryptography
+			self.testset = testset
+			self.trainset = trainset
+		
+		def train(self):
+			vectorize_text = self.vectorizer.fit_transform(
+				self.trainset.tweets.values.astype('U'))
+			self.classifier = self.classifier.fit(vectorize_text, 
+				self.trainset.pro_isis)
+			vectorize_text = self.vectorizer.transform(
+				self.testset.tweets.values.astype('U'))
+			score = self.classifier.score(vectorize_text, 
+				self.testset.pro_isis)
+			return score
+		
+		def get_encrypted_model(self):
+			self.encrypted_model = self.homomorphic_cryptography
+				.encrypt(self.classifier)
+			return self.encrypted_model
+		
+		def decrypt_result(self, encrypted_prediction):
+			value = self.homomorphic_cryptography.decrypt(
+				encrypted_prediction)
+			return 1/(1+np.exp(-value))
+		
+		def plaintext_predict(self,tweet):
+			return self.classifier.predict_proba(
+				self.vectorizer.transform(tweet))[:,1][0]
+	\end{lstlisting}
+	
+	\begin{lstlisting}[language=Python,caption = Winstom Smith]
+	class WinstonSmith:
+		def __init__(self, data, homomorphic_eval, vectorizer, 
+			encrypted_model):
+			homomorphic_eval.set_encrypted_model(
+				encrypted_model)
+			self.data = data
+			self.homomorphic_eval = homomorphic_eval
+			self.vectorizer = vectorizer
+		
+		def vectorize(self, text):
+			return np.array(self.vectorizer.transform(text)
+				.todense())[0]
+		
+		
+		def predict(self, vector):
+			return self.homomorphic_eval.evaluate(vector)
+		
+		def talk(self):
+			return self.data.sample(1)
+	\end{lstlisting}
+	
+	\begin{lstlisting}[language=Python,caption = Example Exchange]
+	def example_situation(classifier, vectorizer, trainset, testset, 
+		tweet):
+	
+		seal_scheme = PaillierScheme()
+		seal_crypto = seal_scheme.getCrypto()
+		
+		big_brother = BenevolentBigBrother(classifier, vectorizer, 
+			seal_crypto, trainset, testset)
+		
+		big_brother.train()
+		
+		encrypted_model = big_brother.get_encrypted_model()
+		
+		seal_eval = seal_scheme.getEval()
+		winston = WinstonSmith(testset, seal_eval, vectorizer, 
+			encrypted_model)
+		
+		tweet_vector = winston.vectorize(tweet.tweets)
+		
+		encrypted_prediction = winston.predict(tweet_vector)
+
+		decrypted_prediction = big_brother.decrypt_result(
+			encrypted_prediction)
+		
+	
+	\end{lstlisting}
+		
 	\section{Evaluation}
 	
 	\subsection{Code Listing}
     You can load segments of code from a file, or embed them directly.
     
-\begin{lstlisting}[caption = Hello World! in c++]
-#include <iostream>
-
-int main() {
-    std::cout << "Hello World!" << std::endl;
-    std::cin.get();
-    return 0;
-}
-\end{lstlisting}
     
 \subsection{PseudoCode}
 

@@ -1,0 +1,71 @@
+\begin{thebibliography}{10}
+
+\bibitem{Selyukh:2013}
+A.~Selyukh, ``Nsa staff used spy tools on spouses, ex-lovers: Watchdog,'' 2013
+  (accessed April 20, 2019).
+
+\bibitem{pymnts}
+Pymnts, ``Lyft accused of giving access to rider data, including zuck's phone
+  number,'' 2018 (accessed April 20, 2019).
+
+\bibitem{paillier1999public}
+P.~Paillier, ``Public-key cryptosystems based on composite degree residuosity
+  classes,'' in {\em International Conference on the Theory and Applications of
+  Cryptographic Techniques}, pp.~223--238, Springer, 1999.
+
+\bibitem{gentry2009fully}
+C.~Gentry {\em et~al.}, ``Fully homomorphic encryption using ideal lattices.,''
+  in {\em Stoc}, vol.~9, pp.~169--178, 2009.
+
+\bibitem{sealcrypto}
+``{M}icrosoft {SEAL} (release 2.3).'' \url{http://sealcrypto.org}, Dec. 2017.
+\newblock Microsoft Research, Redmond, WA.
+
+\bibitem{iamtrask:2017}
+iamtrask, ``Safe crime detection,'' 2017 (accessed April 20, 2019).
+
+\bibitem{scikit-learn}
+F.~Pedregosa, G.~Varoquaux, A.~Gramfort, V.~Michel, B.~Thirion, O.~Grisel,
+  M.~Blondel, P.~Prettenhofer, R.~Weiss, V.~Dubourg, J.~Vanderplas, A.~Passos,
+  D.~Cournapeau, M.~Brucher, M.~Perrot, and E.~Duchesnay, ``Scikit-learn:
+  Machine learning in {P}ython,'' {\em Journal of Machine Learning Research},
+  vol.~12, pp.~2825--2830, 2011.
+
+\bibitem{python-paillier}
+``python-paillier.'' \url{https://github.com/n1analytics/python-paillier}, Dec.
+  2012.
+\newblock n1analytics.
+
+\bibitem{PySEAL}
+``Pyseal.'' \url{https://github.com/Lab41/PySEAL}, Dec. 2017.
+\newblock Lab41.
+
+\bibitem{rivest1978method}
+R.~L. Rivest, A.~Shamir, and L.~Adleman, ``A method for obtaining digital
+  signatures and public-key cryptosystems,'' {\em Communications of the ACM},
+  vol.~21, no.~2, pp.~120--126, 1978.
+
+\bibitem{rivest1978data}
+R.~L. Rivest, L.~Adleman, M.~L. Dertouzos, {\em et~al.}, ``On data banks and
+  privacy homomorphisms,'' {\em Foundations of secure computation}, vol.~4,
+  no.~11, pp.~169--180, 1978.
+
+\bibitem{wiki:lattice}
+{Wikipedia contributors}, ``Lattice problem --- {W}ikipedia{,} the free
+  encyclopedia,'' 2004.
+\newblock [Online; accessed 22-April-2019].
+
+\bibitem{raynal}
+F.~Raynal, ``A brief survey of fully homomorphic encryption, computing on
+  encrypted data.''
+
+\bibitem{brakerski2014efficient}
+Z.~Brakerski and V.~Vaikuntanathan, ``Efficient fully homomorphic encryption
+  from (standard) lwe,'' {\em SIAM Journal on Computing}, vol.~43, no.~2,
+  pp.~831--871, 2014.
+
+\bibitem{fan2012somewhat}
+J.~Fan and F.~Vercauteren, ``Somewhat practical fully homomorphic
+  encryption.,'' {\em IACR Cryptology ePrint Archive}, vol.~2012, p.~144, 2012.
+
+\end{thebibliography}
